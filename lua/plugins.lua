@@ -41,6 +41,16 @@ require("nvim-treesitter.configs").setup({
 		},
 	},
 })
+-- Highlight when yanking (copying) text
+--  Try it with `yap` in normal mode
+--  See `:help vim.highlight.on_yank()`
+vim.api.nvim_create_autocmd("TextYankPost", {
+	desc = "Highlight when yanking (copying) text",
+	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
+	callback = function()
+		vim.highlight.on_yank()
+	end,
+})
 
 -- Next we configure the opt plugins
 
@@ -393,4 +403,26 @@ packadd_defer({
 			return ":IncRename " .. vim.fn.expand("<cword>")
 		end, { expr = true, desc = "Rename" }, { noremap = true, silent = true })
 	end,
+})
+
+-- file tree
+packadd_defer({
+	plugin = "neo-tree",
+	init_function = function()
+		packadd("nui")
+		require("neo-tree").setup({
+			window = {
+				position = "right",
+			},
+			filesystem = {
+				filtered_items = {
+					visible = true,
+					hide_dot_files = false,
+					hide_gitignored = false,
+					hide_hidden = false,
+				},
+			},
+		})
+	end,
+	keymaps = { { keys = "\\", command = "<cmd>Neotree toggle<cr>", options = { desc = "Toggle Neotree" } } },
 })
